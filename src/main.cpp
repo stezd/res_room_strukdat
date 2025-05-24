@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 
+#include "utils.hpp"
+
 int main() {
     BookingSystem bookingSystem;
     int choice;
@@ -17,10 +19,8 @@ int main() {
 
         if (choice == 1) {
             std::string id, nama, nim, ruangan, tanggal, jamMulai, jamSelesai;
-            std::cout << "Masukkan ID: ";
-            std::cin >> id;
             std::cout << "Masukkan Nama: ";
-            std::cin >> nama;
+            std::getline(std::cin >> std::ws, nama);
             std::cout << "Masukkan NIM: ";
             std::cin >> nim;
             std::cout << "Masukkan Ruangan: ";
@@ -32,7 +32,8 @@ int main() {
             std::cout << "Masukkan Jam Selesai: ";
             std::cin >> jamSelesai;
 
-            Reservation rsv(id, nama, nim, ruangan, tanggal, jamMulai, jamSelesai, "Menunggu");
+            Reservation rsv("", nama, nim, ruangan, tanggal, jamMulai, jamSelesai, "Menunggu");
+            rsv.setId(generateBookingCode(rsv));
             bookingSystem.tambahReservasi(rsv);
             std::cout << "Reservasi berhasil ditambahkan!\n";
         } else if (choice == 2) {
