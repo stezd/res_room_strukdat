@@ -1,5 +1,4 @@
-#ifndef RESERVATION_HPP
-#define RESERVATION_HPP
+#pragma once
 
 #include <string>
 #include <nlohmann/json.hpp>
@@ -86,5 +85,3 @@ private:
 void to_json(nlohmann::json &j, const Reservation &r);
 
 void from_json(const nlohmann::json &j, Reservation &r);
-
-#endif
