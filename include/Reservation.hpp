@@ -1,12 +1,12 @@
-#pragma once
 
+#pragma once
 #include <string>
 #include <nlohmann/json.hpp>
 
 class Reservation {
 public:
     Reservation() = default;
-
+    
     Reservation(const std::string &id, const std::string &nama, const std::string &nim,
                 const std::string &ruangan, const std::string &tanggal,
                 const std::string &jamMulai, const std::string &jamSelesai,
@@ -50,9 +50,7 @@ public:
         }
     }
 
-    #include "Reservation.hpp"
-
-nlohmann::json Reservation::to_json() const {
+    nlohmann::json to_json() const {
         try {
             nlohmann::json j = {
                 {"id", id},
@@ -65,10 +63,10 @@ nlohmann::json Reservation::to_json() const {
                 {"status", status}
             };
             return j;
-    } catch (const nlohmann::json::exception &e) {
-        throw std::runtime_error("Failed to create JSON: " + std::string(e.what()));
+        } catch (const nlohmann::json::exception &e) {
+            throw std::runtime_error("Failed to create JSON: " + std::string(e.what()));
+        }
     }
-}
 
 private:
     std::string id;
@@ -81,7 +79,10 @@ private:
     std::string status;
 };
 
-// JSON serialization
-void to_json(nlohmann::json &j, const Reservation &r);
+inline void to_json(nlohmann::json &j, const Reservation &r) {
+    j = r.to_json();
+}
 
-void from_json(const nlohmann::json &j, Reservation &r);
+inline void from_json(const nlohmann::json &j, Reservation &r) {
+    r = Reservation::from_json(j);
+}

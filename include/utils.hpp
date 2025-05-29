@@ -1,9 +1,11 @@
-#ifndef UTILS_HPP
-#define UTILS_HPP
+#pragma once
 
 #include <string>
+#include <functional>
 #include "Reservation.hpp"
 
-std::string generateBookingCode(const Reservation& rsv);
-
-#endif
+inline std::string generateBookingCode(const Reservation& rsv) {
+    constexpr std::hash<std::string> hasher;
+    std::string const raw = rsv.getNama() + rsv.getNim() + rsv.getTanggal() + rsv.getTanggal();
+    return std::to_string(hasher(raw));
+}
