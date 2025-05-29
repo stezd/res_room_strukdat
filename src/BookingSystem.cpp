@@ -3,21 +3,21 @@
 #include <iostream>
 
 void BookingSystem::tambahReservasi(const Reservation &rsv) {
-    waitingQueue.push(rsv);
+    waitingQueue.enqueue(rsv);
 }
 
 void BookingSystem::tampilkanAntrean() const {
     if (waitingQueue.empty()) {
-        std::cout << "Antrean kosong" < < std::endl;
+        std::cout << "Antrean kosong" << std::endl;
         return;
     }
 
-    std::queue<Reservation> tempQueue = waitingQueue;
+    Queue<Reservation> tempQueue = waitingQueue;
     int idx = 1;
     std::cout << "\nDaftar Antrean Reservasi:\n" << std::endl;
 
     while (!tempQueue.empty()) {
-        const Reservation &rsv = tempQueue.front();
+        const Reservation &rsv = tempQueue.peek();
         std::cout << idx << ". "
                 << "ID: " << rsv.getId()
                 << " | Nama: " << rsv.getNama()
@@ -26,7 +26,7 @@ void BookingSystem::tampilkanAntrean() const {
                 << " | Tanggal: " << rsv.getTanggal()
                 << " | Waktu: " << rsv.getJamMulai() << "-" << rsv.getJamSelesai()
                 << " | Status: " << rsv.getStatus() << std::endl;
-        tempQueue.pop();
+        tempQueue.dequeue();
         ++idx;
     }
     std::cout << std::endl;
