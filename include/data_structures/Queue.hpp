@@ -1,5 +1,4 @@
-#ifndef QUEUE_HPP
-#define QUEUE_HPP
+#pragma once
 
 #include <stdexcept>
 
@@ -59,4 +58,3 @@ public:
     }
 };
 
-#endif
