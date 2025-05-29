@@ -11,7 +11,6 @@ include_directories(${PROJECT_SOURCE_DIR}/include/data_structures)
 
 
 add_executable(res_room_strukdat src/main.cpp
-        src/Reservation.cpp
         src/BookingSystem.cpp
         src/utils.cpp
         include/data_structures/Stack.hpp
