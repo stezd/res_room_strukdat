@@ -8,7 +8,7 @@ void BookingSystem::tambahReservasi(const Reservation &rsv) {
 
 void BookingSystem::tampilkanAntrean() const {
     if (waitingQueue.empty()) {
-        std::cout << "Antrean kosong" << std::endl;
+        std::cout << "Antrean kosong" < < std::endl;
         return;
     }
 
