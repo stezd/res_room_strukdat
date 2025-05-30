@@ -25,7 +25,7 @@ public:
     }
 
     void erase(const std::string &id) {
-        auto it = std::ranges::find_if(ReservationTable.begin(), ReservationTable.end(),
+        const auto it = std::ranges::find_if(ReservationTable.begin(), ReservationTable.end(),
                                        [&id](const Reservation &rsv) { return rsv.getId() == id; });
         if (it == ReservationTable.end()) {
             throw std::runtime_error("Reservation with given ID does not exist");
