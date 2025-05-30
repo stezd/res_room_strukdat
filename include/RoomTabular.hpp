@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-#include <iostream>
 #include <nlohmann/json.hpp>
 
 class Room {
@@ -28,6 +27,14 @@ public:
     void setCloseTime(const std::string &close) { jam_ruangan_close = close; }
     void setReady(bool ready) { ruangan_ready = ready; }
 
+    std::string toString() const {
+        return "ID: " + id_ruangan +
+               " | Nama: " + nama_ruangan +
+               " | Jam Buka: " + jam_ruangan_open +
+               " | Jam Tutup: " + jam_ruangan_close +
+               " | Siap: " + (ruangan_ready ? "Ya" : "Tidak");
+    }
+
 private:
     std::string id_ruangan;
     std::string nama_ruangan;
@@ -46,16 +53,12 @@ public:
         return rooms;
     }
 
-    void printRooms() const {
-        std::cout << "Daftar Ruangan:\n";
-        for (const auto &room: rooms) {
-            std::cout << "ID: " << room.getId()
-                    << " | Nama: " << room.getName()
-                    << " | Jam Buka: " << room.getOpenTime()
-                    << " | Jam Tutup: " << room.getCloseTime()
-                    << " | Siap: " << (room.isReady() ? "Ya" : "Tidak")
-                    << std::endl;
+    friend std::ostream &operator<<(std::ostream &os, const RoomTabular &rt) {
+        os << "Daftar Ruangan:\n";
+        for (const auto &room: rt.rooms) {
+            os << room.toString() << std::endl;
         }
+        return os;
     }
 
     void from_json(const nlohmann::json &j) {
