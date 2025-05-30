@@ -12,6 +12,9 @@ include_directories(${PROJECT_SOURCE_DIR}/include/data_structures)
 
 add_executable(res_room_strukdat src/main.cpp
         include/data_structures/Stack.hpp
+        include/ReservationTabular.hpp
+        include/RoomTabular.hpp
+        include/IO.hpp
 )
 
 target_link_libraries(res_room_strukdat PRIVATE nlohmann_json::nlohmann_json)
