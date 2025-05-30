@@ -4,7 +4,6 @@
 
 template <typename T>
 class Stack {
-private:
     struct Node {
         T data;
         Node* next;
