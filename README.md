@@ -27,10 +27,6 @@ This project implements a **Room Reservation System** in C++ with support for **
     - Reservations are saved to `reservations.json`.
 4. Reload the data on subsequent application runs, preserving changes.
 
-## License
-
-This project is provided under [Your License Here] (e.g., MIT, Apache 2.0). Feel free to use and modify.
-
 ## Compilation and Requirements
 ### Prerequisites
 1. **C++ Compiler**
