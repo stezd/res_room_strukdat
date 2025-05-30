@@ -15,6 +15,7 @@ add_executable(res_room_strukdat src/main.cpp
         include/ReservationTabular.hpp
         include/RoomTabular.hpp
         include/IO.hpp
+        include/input_validator.hpp
 )
 
 target_link_libraries(res_room_strukdat PRIVATE nlohmann_json::nlohmann_json)

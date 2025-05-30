@@ -2,64 +2,60 @@
 
 #include <nlohmann/json.hpp>
 #include <fstream>
-#include <filesystem>
-#include "Reservation.hpp"
+#include <stdexcept>
+#include <string>
+#include <RoomTabular.hpp>
+#include <Reservation.hpp>
 
-class IO {
-private:
-    static bool fileExists(const std::string &filename) {
-        return std::filesystem::exists(filename);
+// Function to save JSON data to a file
+inline void saveToFile(const std::string& filename, const nlohmann::json& jsonData) {
+    std::ofstream outFile(filename);
+    if (!outFile) {
+        throw std::runtime_error("Unable to open file for writing: " + filename);
     }
+    outFile << jsonData.dump(4); // Format with 4-space indentation
+    outFile.close();
+}
 
-public:
-    static void writeToJson(const std::string &filename, const Reservation &reservation) {
-        nlohmann::json j = reservation;
-        std::ofstream file(filename);
-        if (!file.is_open()) {
-            throw std::runtime_error("Unable to open file: " + filename);
-        }
-        file << j.dump(4);
+// Function to load JSON data from a file
+inline nlohmann::json loadFromFile(const std::string& filename) {
+    std::ifstream inFile(filename);
+    if (!inFile) {
+        throw std::runtime_error("Unable to open file for reading: " + filename);
     }
+    nlohmann::json jsonData;
+    inFile >> jsonData;
+    return jsonData;
+}
 
-    static void writeToJson(const std::string &filename, const std::vector<Reservation> &reservations) {
-        nlohmann::json j = nlohmann::json::array();
-        for (const auto &reservation: reservations) {
-            j.push_back(reservation);
-        }
-        std::ofstream file(filename);
-        if (!file.is_open()) {
-            throw std::runtime_error("Unable to open file: " + filename);
-        }
-        file << j.dump(4);
-    }
+// Function to save a RoomTabular object to a JSON file
+inline void saveRoomTabular(const std::string& filename, const RoomTabular& roomTabular) {
+    saveToFile(filename, roomTabular.to_json());
+}
 
-    static Reservation readFromJson(const std::string &filename) {
-        if (!fileExists(filename)) {
-            throw std::runtime_error("File does not exist: " + filename);
-        }
-        std::ifstream file(filename);
-        if (!file.is_open()) {
-            throw std::runtime_error("Unable to open file: " + filename);
-        }
-        nlohmann::json j;
-        file >> j;
-        return j.get<Reservation>();
-    }
+// Function to load a RoomTabular object from a JSON file
+inline RoomTabular loadRoomTabular(const std::string& filename) {
+    nlohmann::json jsonData = loadFromFile(filename);
+    RoomTabular roomTabular;
+    roomTabular.from_json(jsonData);
+    return roomTabular;
+}
 
-    static std::vector<Reservation> readReservationsFromJson(const std::string &filename) {
-        if (!fileExists(filename)) {
-            throw std::runtime_error("File does not exist: " + filename);
-        }
-        std::ifstream file(filename);
-        if (!file.is_open()) {
-            throw std::runtime_error("Unable to open file: " + filename);
-        }
-        nlohmann::json j;
-        file >> j;
-        std::vector<Reservation> reservations;
-        for (const auto &item: j) {
-            reservations.push_back(item.get<Reservation>());
-        }
-        return reservations;
+// Function to save a vector of Reservation objects to a JSON file
+inline void saveReservations(const std::string& filename, const std::vector<Reservation>& reservations) {
+    nlohmann::json jsonArray = nlohmann::json::array();
+    for (const auto& reservation : reservations) {
+        jsonArray.push_back(reservation.to_json());
     }
-};
+    saveToFile(filename, jsonArray);
+}
+
+// Function to load a vector of Reservation objects from a JSON file
+inline std::vector<Reservation> loadReservations(const std::string& filename) {
+    nlohmann::json jsonArray = loadFromFile(filename);
+    std::vector<Reservation> reservations;
+    for (const auto& item : jsonArray) {
+        reservations.push_back(Reservation::from_json(item));
+    }
+    return reservations;
+}
