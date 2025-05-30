@@ -2,21 +2,24 @@
 
 #include <stdexcept>
 
-template <typename T>
+template<typename T>
 class Queue {
 private:
     struct Node {
         T data;
-        Node* next;
-        explicit Node(const T& value) : data(value), next(nullptr) {}
+        Node *next;
+
+        explicit Node(const T &value) : data(value), next(nullptr) {
+        }
     };
 
-    Node* front;
-    Node* rear;
+    Node *front;
+    Node *rear;
     size_t count;
 
 public:
-    Queue() : front(nullptr), rear(nullptr), count(0) {}
+    Queue() : front(nullptr), rear(nullptr), count(0) {
+    }
 
     ~Queue() {
         while (!empty()) {
@@ -24,8 +27,8 @@ public:
         }
     }
 
-    void enqueue(const T& value) {
-        Node* node = new Node(value);
+    void enqueue(const T &value) {
+        Node *node = new Node(value);
         if (rear) {
             rear->next = node;
         } else {
@@ -37,14 +40,14 @@ public:
 
     void dequeue() {
         if (empty()) throw std::out_of_range("Queue is empty");
-        Node* temp = front;
+        Node *temp = front;
         front = front->next;
         if (!front) rear = nullptr;
         delete temp;
         --count;
     }
 
-    T& peek() {
+    T &peek() {
         if (empty()) throw std::out_of_range("Queue is empty");
         return front->data;
     }
@@ -57,4 +60,3 @@ public:
         return count;
     }
 };
-

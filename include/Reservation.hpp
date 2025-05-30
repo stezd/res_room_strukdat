@@ -6,7 +6,7 @@
 class Reservation {
 public:
     Reservation() = default;
-    
+
     Reservation(const std::string &id, const std::string &nama, const std::string &nim,
                 const std::string &ruangan, const std::string &tanggal,
                 const std::string &jamMulai, const std::string &jamSelesai,

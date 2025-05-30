@@ -36,7 +36,7 @@ public:
             ++idx;
         }
 
-        
+
         std::cout << std::endl;
     }
 

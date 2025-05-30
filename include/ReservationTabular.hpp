@@ -7,8 +7,6 @@
 
 class ReservationTabular {
     std::vector<Reservation> ReservationVector;
+
 public:
-
 };
-
-

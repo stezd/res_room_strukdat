@@ -8,22 +8,24 @@
 class Room {
 public:
     Room() = default;
-    Room(const std::string& id, const std::string& name,
-         const std::string& open, const std::string& close, bool ready)
+
+    Room(const std::string &id, const std::string &name,
+         const std::string &open, const std::string &close, bool ready)
         : id_ruangan(id), nama_ruangan(name),
           jam_ruangan_open(open), jam_ruangan_close(close),
-          ruangan_ready(ready) {}
+          ruangan_ready(ready) {
+    }
 
-    const std::string& getId() const { return id_ruangan; }
-    const std::string& getName() const { return nama_ruangan; }
-    const std::string& getOpenTime() const { return jam_ruangan_open; }
-    const std::string& getCloseTime() const { return jam_ruangan_close; }
+    const std::string &getId() const { return id_ruangan; }
+    const std::string &getName() const { return nama_ruangan; }
+    const std::string &getOpenTime() const { return jam_ruangan_open; }
+    const std::string &getCloseTime() const { return jam_ruangan_close; }
     bool isReady() const { return ruangan_ready; }
 
-    void setId(const std::string& id) { id_ruangan = id; }
-    void setName(const std::string& name) { nama_ruangan = name; }
-    void setOpenTime(const std::string& open) { jam_ruangan_open = open; }
-    void setCloseTime(const std::string& close) { jam_ruangan_close = close; }
+    void setId(const std::string &id) { id_ruangan = id; }
+    void setName(const std::string &name) { nama_ruangan = name; }
+    void setOpenTime(const std::string &open) { jam_ruangan_open = open; }
+    void setCloseTime(const std::string &close) { jam_ruangan_close = close; }
     void setReady(bool ready) { ruangan_ready = ready; }
 
 private:
@@ -36,29 +38,29 @@ private:
 
 class RoomTabular {
 public:
-    void addRoom(const Room& room) {
+    void addRoom(const Room &room) {
         rooms.push_back(room);
     }
 
-    const std::vector<Room>& getRooms() const {
+    const std::vector<Room> &getRooms() const {
         return rooms;
     }
 
     void printRooms() const {
         std::cout << "Daftar Ruangan:\n";
-        for (const auto& room : rooms) {
+        for (const auto &room: rooms) {
             std::cout << "ID: " << room.getId()
-                      << " | Nama: " << room.getName()
-                      << " | Jam Buka: " << room.getOpenTime()
-                      << " | Jam Tutup: " << room.getCloseTime()
-                      << " | Siap: " << (room.isReady() ? "Ya" : "Tidak")
-                      << std::endl;
+                    << " | Nama: " << room.getName()
+                    << " | Jam Buka: " << room.getOpenTime()
+                    << " | Jam Tutup: " << room.getCloseTime()
+                    << " | Siap: " << (room.isReady() ? "Ya" : "Tidak")
+                    << std::endl;
         }
     }
 
-    void from_json(const nlohmann::json& j) {
+    void from_json(const nlohmann::json &j) {
         rooms.clear();
-        for (const auto& item : j) {
+        for (const auto &item: j) {
             rooms.emplace_back(
                 item.at("id_ruangan").get<std::string>(),
                 item.at("nama_ruangan").get<std::string>(),
@@ -71,7 +73,7 @@ public:
 
     nlohmann::json to_json() const {
         nlohmann::json j = nlohmann::json::array();
-        for (const auto& room : rooms) {
+        for (const auto &room: rooms) {
             j.push_back({
                 {"id_ruangan", room.getId()},
                 {"nama_ruangan", room.getName()},
@@ -82,6 +84,7 @@ public:
         }
         return j;
     }
+
 private:
     std::vector<Room> rooms;
 };
