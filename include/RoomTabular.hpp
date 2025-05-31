@@ -63,6 +63,18 @@ public:
         std::cout << "Room with ID '" << roomId << "' has been successfully deleted.\n";
     }
 
+    const Room &getRoomById(const std::string &roomId) const {
+        auto it = std::ranges::find_if(rooms, [&roomId](const Room &room) {
+            return room.getId() == roomId;
+        });
+
+        if (it == rooms.end()) {
+            throw std::runtime_error("Room with ID '" + roomId + "' does not exist.");
+        }
+
+        return *it;
+    }
+
     const std::vector<Room> &getRooms() const {
         return rooms;
     }
