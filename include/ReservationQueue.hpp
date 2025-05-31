@@ -1,40 +1,39 @@
 #pragma once
 
 #include "Reservation.hpp"
-#include <string>
 #include <Queue.hpp>
 
 class ReservationQueue {
-    Queue<Reservation> ReservationQueue;
+    Queue<Reservation> reservationQueue;
 
 public:
     void enqueue_reservation(const Reservation &rsv) {
-        ReservationQueue.enqueue(rsv);
+        reservationQueue.enqueue(rsv);
     }
 
     Reservation dequeue_reservation() {
-        if (ReservationQueue.empty()) {
+        if (reservationQueue.empty()) {
             throw std::runtime_error("No reservations in the queue");
         }
 
-        Reservation front_reservation = ReservationQueue.peek();
-        ReservationQueue.dequeue();
+        Reservation front_reservation = reservationQueue.peek();
+        reservationQueue.dequeue();
         return front_reservation;
     }
 
     Reservation peek_reservation() const  {
-        if (ReservationQueue.empty()) {
+        if (reservationQueue.empty()) {
             throw std::runtime_error("No reservations in the queue");
         }
-        return ReservationQueue.peek();
+        return reservationQueue.peek();
     }
 
 
     size_t queue_size() const {
-        return ReservationQueue.size();
+        return reservationQueue.size();
     }
 
     bool is_queue_empty() const {
-        return ReservationQueue.empty();
+        return reservationQueue.empty();
     }
 };
