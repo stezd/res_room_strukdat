@@ -18,15 +18,6 @@ This project implements a **Room Reservation System** in C++ with support for **
 - **Interactive CLI**:
     - Menu-driven system for an intuitive user experience.
 
-## Example Workflow
-
-1. Add rooms to the system.
-2. Add a reservation by selecting a room, providing user details, and entering the time slot.
-3. Save data to JSON files:
-    - Rooms are saved to `rooms.json`.
-    - Reservations are saved to `reservations.json`.
-4. Reload the data on subsequent application runs, preserving changes.
-
 ## Compilation and Requirements
 ### Prerequisites
 1. **C++ Compiler**
@@ -41,53 +32,61 @@ This project implements a **Room Reservation System** in C++ with support for **
     - The library is used for JSON handling.
     - You can add it to the project via vcpkg or manually include the single header file.
 
-### Setting Up the JSON Library
-#### Option 1: Using vcpkg (Recommended)
-1. Install **vcpkg** by following the instructions [here](https://github.com/microsoft/vcpkg).
-2. Install the `nlohmann-json` library using the following command:
-``` bash
-   vcpkg install nlohmann-json
-```
-1. Link vcpkg to your build system. For example:
-``` bash
-   cmake -DCMAKE_TOOLCHAIN_FILE=[path to vcpkg]/scripts/buildsystems/vcpkg.cmake ..
-```
-#### Option 2: Add the Single Header Manually
-1. Download the `json.hpp` header from the [nlohmann/json GitHub repository](https://github.com/nlohmann/json).
-2. Place the `json.hpp` file in your project's include directory.
+## Updated Compilation and Requirements
 
-### Compilation Steps
-#### If Using CMake:
-1. Clone the project or extract the files to your working directory.
-``` bash
+### Prerequisites
+
+1. **C++ Compiler**
+    - **C++20 Standard Support** required. Ensure you have a compatible compiler:
+        - `g++` (version 10 or newer)
+        - `clang++` (version 10 or newer)
+        - **MSVC** (Visual Studio 2019 or newer)
+    - Properly set up your environment variables for the selected compiler.
+
+2. **CMake**
+    - Version **3.5** or higher. Download and install from [here](https://cmake.org/download/).
+
+3. **nlohmann/json Library**
+    - Utilized for JSON data manipulation:
+        - Automatically fetched and configured via **CMake FetchContent**.
+    - Alternatively, you can manually integrate it by following the manual setup instructions below.
+
+### Setting Up the Project
+
+#### Option 1: Fully Automated Setup (Recommended)
+The provided `CMakeLists.txt` already fetches and integrates the **nlohmann/json** library. Ensure that you have an active internet connection for the first build.
+
+#### Option 2: Manual Setup for **nlohmann/json**
+1. Download the library:
+    - Fetch the **single header file** `json.hpp` from the [nlohmann/json GitHub repository](https://github.com/nlohmann/json).
+2. Place it in your `include/` directory (under `include/utils` is recommended).
+3. Adjust the `CMakeLists.txt` file if necessary to include the manual path, or directly include the file in your sources.
+
+### Compilation Instructions
+
+#### Building with CMake
+1. Clone or download the project:
+   ```bash
    git clone https://github.com/your-repository/room-reservation-system.git
    cd room-reservation-system
-```
-1. Create a build directory:
-``` bash
-   mkdir build && cd build
-```
-1. Generate build files using CMake:
-``` bash
-   cmake ..
-```
-1. Build the project:
-``` bash
-   cmake --build .
-```
-#### If Manually Compiling with g++:
-1. Use the following command to compile the project:
-``` bash
-   g++ -std=c++17 -Ipath/to/json/include -o main main.cpp
-```
-Replace `path/to/json/include` with the directory containing the `json.hpp` header.
-### Running the Application
-After building the project, you can run the compiled executable:
-``` bash
-./main
-```
-Follow the interactive menu to add reservations, display room information, and more.
+   ```
+2. Execute this line of command
+   ```bash
+   cmake -S . -B build
 
+   ```
+3. Build with:
+   ```bash
+   cmake --build build
+   ```
+4. Navigate to your executable.
+   ```bash
+   cd .\build\build\Debug\
+   ```
+5. Run your application
+    ```bash
+    .\res_room_strukdat.exe
+    ```
 ## License
 
 This project is provided under MIT. Feel free to use and modify.

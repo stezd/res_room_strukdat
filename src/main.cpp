@@ -20,7 +20,6 @@ std::string promptInput(const std::string &promptMessage, Validator validator) {
     }
 }
 
-// Prompts for integer input within a range
 int promptIntInput(const std::string &promptMessage, int min, int max) {
     int value;
     while (true) {
@@ -31,13 +30,12 @@ int promptIntInput(const std::string &promptMessage, int min, int max) {
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear remaining characters
             return value;
         }
-        std::cin.clear(); // Clear error state
+        std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore invalid input
         std::cout << "Invalid input. Please enter a number between " << min << " and " << max << ".\n";
     }
 }
 
-// Prompts for and validates a time range
 std::pair<std::string, std::string> promptTimeRange() {
     auto startTime = std::make_unique<std::string>();
     auto endTime = std::make_unique<std::string>();
