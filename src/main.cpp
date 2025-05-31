@@ -67,11 +67,11 @@ void displayMenu() {
     std::cout << "9. Clear Queue\n";
     std::cout << "10. View Reservation Table\n";
     std::cout << "11. Sort Reservations\n";
-    std::cout << "12. Exit\n";
+    std::cout << "12. Undo Last Action\n"; // Added undo option
+    std::cout << "13. Exit\n";
     std::cout << "=============================================\n";
     std::cout << "Choice: ";
 }
-
 
 int main() {
     auto initialRooms = std::make_unique<RoomTabular>();
@@ -86,7 +86,7 @@ int main() {
 
     while (true) {
         displayMenu();
-        int choice = promptIntInput("", 1, 12);
+        int choice = promptIntInput("", 1, 13); // Updated range to include Undo Last Action and Exit
 
         if (choice == 1) {
             auto name = std::make_unique<std::string>(promptInput("Enter Name: ", InputValidator::validateName));
@@ -172,7 +172,13 @@ int main() {
             } catch (const std::exception &e) {
                 std::cerr << "Error while sorting reservations: " << e.what() << "\n";
             }
-        } else if (choice == 12) {
+        } else if (choice == 12) { // Undo Last Action
+            try {
+                bookingSystem->undoReservationAction();
+            } catch (const std::exception &e) {
+                std::cerr << "Error while undoing the action: " << e.what() << "\n";
+            }
+        } else if (choice == 13) { // Exit
             std::cout << "Thank you for using the Room Reservation System!\n";
             break;
         }
@@ -180,4 +186,3 @@ int main() {
 
     return 0;
 }
-
