@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
+#include <iostream>
 
 class Room {
 public:
@@ -47,6 +48,19 @@ class RoomTabular {
 public:
     void addRoom(const Room &room) {
         rooms.push_back(room);
+    }
+
+    void deleteRoom(const std::string &roomId) {
+        auto it = std::ranges::find_if(rooms, [&roomId](const Room &room) {
+            return room.getId() == roomId;
+        });
+
+        if (it == rooms.end()) {
+            throw std::runtime_error("Room with ID '" + roomId + "' does not exist.");
+        }
+
+        rooms.erase(it);
+        std::cout << "Room with ID '" << roomId << "' has been successfully deleted.\n";
     }
 
     const std::vector<Room> &getRooms() const {

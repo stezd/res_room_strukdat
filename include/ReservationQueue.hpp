@@ -2,6 +2,7 @@
 
 #include "Reservation.hpp"
 #include <Queue.hpp>
+#include <nlohmann/json.hpp>
 
 class ReservationQueue {
     Queue<Reservation> reservationQueue;
@@ -36,4 +37,24 @@ public:
     bool is_queue_empty() const {
         return reservationQueue.empty();
     }
+
+    nlohmann::json to_json() const {
+        nlohmann::json jsonArray = nlohmann::json::array();
+
+        auto tempQueue = reservationQueue;
+        while (!tempQueue.empty()) {
+            jsonArray.push_back(tempQueue.peek().to_json());
+            tempQueue.dequeue();
+        }
+
+        return jsonArray;
+    }
+
+    void from_json(const nlohmann::json &jsonArray) {
+        for (const auto &item : jsonArray) {
+            Reservation reservation = Reservation::from_json(item);
+            enqueue_reservation(reservation);
+        }
+    }
+
 };

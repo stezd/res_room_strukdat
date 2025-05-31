@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <stdexcept>
+#include <nlohmann/json.hpp>
 
 class ReservationTabular {
     std::vector<Reservation> ReservationTable;
@@ -56,6 +57,21 @@ public:
         std::ranges::copy_if(ReservationTable, std::back_inserter(result),
                              [&tanggal](const Reservation &rsv) { return rsv.getTanggal() == tanggal; });
         return result;
+    }
+
+    nlohmann::json to_json() const {
+        nlohmann::json jsonArray = nlohmann::json::array();
+        for (const auto &rsv : ReservationTable) {
+            jsonArray.push_back(rsv.to_json()); // Use Reservation's to_json
+        }
+        return jsonArray;
+    }
+
+    void from_json(const nlohmann::json &jsonArray) {
+        ReservationTable.clear(); // Clear existing table before loading
+        for (const auto &item : jsonArray) {
+            ReservationTable.push_back(Reservation::from_json(item)); // Use Reservation's from_json
+        }
     }
 
     //implementasi sorting biar nilai bagus dikit
