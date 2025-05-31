@@ -64,10 +64,12 @@ void displayMenu() {
     std::cout << "8. Load System (Load from File)\n";
     std::cout << "9. Clear Queue\n";
     std::cout << "10. View Reservation Table\n";
-    std::cout << "11. Exit\n";
+    std::cout << "11. Sort Reservations\n";
+    std::cout << "12. Exit\n";
     std::cout << "=============================================\n";
     std::cout << "Choice: ";
 }
+
 
 int main() {
     auto initialRooms = std::make_unique<RoomTabular>();
@@ -82,7 +84,7 @@ int main() {
 
     while (true) {
         displayMenu();
-        int choice = promptIntInput("", 1, 11);
+        int choice = promptIntInput("", 1, 12);
 
         if (choice == 1) {
             auto name = std::make_unique<std::string>(promptInput("Enter Name: ", InputValidator::validateName));
@@ -153,6 +155,22 @@ int main() {
         } else if (choice == 10) {
             bookingSystem->tampilkanTable();
         } else if (choice == 11) {
+            std::string criteria = promptInput(
+                "Enter sorting criteria (tanggal, ruangan, jam_mulai, id): ",
+                [](const std::string &input, std::string &errorMsg) {
+                    if (input == "tanggal" || input == "ruangan" || input == "jam_mulai" || input == "id") {
+                        return true;
+                    }
+                    errorMsg = "Invalid criteria! Valid options: tanggal, ruangan, jam_mulai, id.";
+                    return false;
+                });
+
+            try {
+                bookingSystem->sortReservationTable(criteria);
+            } catch (const std::exception &e) {
+                std::cerr << "Error while sorting reservations: " << e.what() << "\n";
+            }
+        } else if (choice == 12) {
             std::cout << "Thank you for using the Room Reservation System!\n";
             break;
         }
@@ -160,3 +178,4 @@ int main() {
 
     return 0;
 }
+
