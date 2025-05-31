@@ -20,6 +20,7 @@ std::string promptInput(const std::string &promptMessage, Validator validator) {
     }
 }
 
+// Prompts for integer input within a range
 int promptIntInput(const std::string &promptMessage, int min, int max) {
     int value;
     while (true) {
@@ -30,12 +31,13 @@ int promptIntInput(const std::string &promptMessage, int min, int max) {
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear remaining characters
             return value;
         }
-        std::cin.clear();
+        std::cin.clear(); // Clear error state
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore invalid input
         std::cout << "Invalid input. Please enter a number between " << min << " and " << max << ".\n";
     }
 }
 
+// Prompts for and validates a time range
 std::pair<std::string, std::string> promptTimeRange() {
     auto startTime = std::make_unique<std::string>();
     auto endTime = std::make_unique<std::string>();
@@ -64,10 +66,7 @@ void displayMenu() {
     std::cout << "8. Load System (Load from File)\n";
     std::cout << "9. Clear Queue\n";
     std::cout << "10. View Reservation Table\n";
-    std::cout << "11. Sort Reservation Table\n";
-    std::cout << "12. Delete Reservation by ID\n";\
-    std::cout << "13. Undo Action\n";
-    std::cout << "14. Exit\n";
+    std::cout << "11. Exit\n";
     std::cout << "=============================================\n";
     std::cout << "Choice: ";
 }
@@ -85,7 +84,7 @@ int main() {
 
     while (true) {
         displayMenu();
-        int choice = promptIntInput("", 1, 13);
+        int choice = promptIntInput("", 1, 11);
 
         if (choice == 1) {
             auto name = std::make_unique<std::string>(promptInput("Enter Name: ", InputValidator::validateName));
@@ -100,6 +99,7 @@ int main() {
                 auto rsv = std::make_unique<Reservation>("", *name, *nim, *room, *date, startTime, endTime, "Waiting");
                 rsv->setId(generateBookingCode(*rsv));
                 bookingSystem->tambahReservasiKeAntrean(*rsv);
+                std::cout << "Reservation successfully added to queue!\n";
             } catch (const std::exception &e) {
                 std::cerr << "Error: " << e.what() << "\n";
             }
@@ -155,48 +155,8 @@ int main() {
         } else if (choice == 10) {
             bookingSystem->tampilkanTable();
         } else if (choice == 11) {
-            std::cout << "Sort by:\n";
-            std::cout << "1. Date\n";
-            std::cout << "2. Start Time\n";
-            std::cout << "3. Room Name\n";
-            int sortChoice = promptIntInput("Enter sort criteria (1-3): ", 1, 3);
-
-            std::string criteria;
-            switch (sortChoice) {
-                case 1: criteria = "date";
-                    break;
-                case 2: criteria = "jammulai";
-                    break;
-                case 3: criteria = "name";
-                    break;
-                default: criteria = "date";
-                    break;
-            }
-
-            try {
-                bookingSystem->sortReservationTable(criteria);
-            } catch (const std::exception &e) {
-                std::cerr << "Error: " << e.what() << "\n";
-            }
-        } else if (choice == 12) {
-            auto reservationId = std::make_unique<std::string>(
-                promptInput("Enter Reservation ID to delete: ", InputValidator::validateNotEmpty));
-            try {
-                bookingSystem->deleteReservationById(*reservationId);
-                std::cout << "Reservation successfully deleted!\n";
-            } catch (const std::exception &e) {
-                std::cerr << "Error: " << e.what() << "\n";
-            }
-        } else if (choice == 14) {
             std::cout << "Thank you for using the Room Reservation System!\n";
             break;
-        } else if (choice == 13) {
-            try {
-                bookingSystem->undo();
-                std::cout << "Undo operation performed.\n";
-            } catch (const std::exception &e) {
-                std::cerr << "Error: " << e.what() << "\n";
-            }
         }
     }
 

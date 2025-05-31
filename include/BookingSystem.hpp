@@ -4,17 +4,14 @@
 #include "ReservationTabular.hpp"
 #include "Reservation.hpp"
 #include "ReservationQueue.hpp"
-#include "Stack.hpp"
+#include "IO.hpp"
 #include <iostream>
-#include <IO.hpp>
 #include <string>
-#include <functional>
 
 class BookingSystem {
     RoomTabular roomTable;
     ReservationTabular reservationTable;
     ReservationQueue reservationQueue;
-    Stack<std::function<void()>> undoStack;
 
 public:
     explicit BookingSystem(const RoomTabular &rooms) : roomTable(rooms) {
@@ -29,12 +26,6 @@ public:
         try {
             Room room(id, name, openTime, closeTime, ready);
             roomTable.addRoom(room);
-
-            undoStack.push([this, id]() {
-                this->roomTable.deleteRoom(id); // Reverse: delete the room added
-                std::cout << "Undo: Room with ID '" << id << "' has been deleted.\n";
-            });
-
             std::cout << "Ruangan berhasil ditambahkan: " << room.toString() << "\n";
         } catch (const std::runtime_error &e) {
             std::cerr << "Error: " << e.what() << "\n";
@@ -54,87 +45,33 @@ public:
                                      + rsv.getJamMulai() + " and " + rsv.getJamSelesai() + ".\n");
         }
 
-        undoStack.push([this, id = rsv.getId()]() {
-            this->reservationTable.erase(id); // Reverse: remove the reservation
-            std::cout << "Undo: Reservation with ID '" << id << "' has been removed.\n";
-        });
-
         reservationTable.push(rsv);
         std::cout << "Reservation added successfully!\n";
     }
 
     void deleteReservationById(const std::string &reservationId) {
         try {
-            // Fetch the reservation using its ID
-            auto reservationOpt = reservationTable.get_reservation_by_id(reservationId);
-
-            // Ensure the reservation exists
-            if (!reservationOpt.has_value()) {
-                throw std::runtime_error("Error: Reservation with ID '" + reservationId + "' not found!");
-            }
-
-            // Extract the actual reservation from the optional
-            Reservation reservationToDelete = reservationOpt.value();
-
-            // Erase the reservation from the table
             reservationTable.erase(reservationId);
-
-            // Push the reverse action for undo
-            undoStack.push([this, reservationToDelete]() {
-                this->reservationTable.push(reservationToDelete); // Restore the reservation
-                std::cout << "Undo: Reservation with ID '" << reservationToDelete.getId() << "' has been restored.\n";
-            });
-
             std::cout << "Reservation with ID '" << reservationId << "' has been successfully deleted.\n";
-
         } catch (const std::exception &e) {
             std::cerr << "Error: " << e.what() << "\n";
         }
     }
 
-
-void deleteRoomById(const std::string &roomId) {
+    void deleteRoomById(const std::string &roomId) {
         try {
-            std::optional<Room> roomToDelete;
-            for (const auto &room: roomTable.getRooms()) {
-                if (room.getId() == roomId) {
-                    roomToDelete = room;
-                    break;
-                }
-            }
-
-            if (!roomToDelete) {
-                throw std::runtime_error("Error: Room with ID '" + roomId + "' not found!");
-            }
-
             roomTable.deleteRoom(roomId);
-
-            undoStack.push([this, room = *roomToDelete]() {
-                this->roomTable.addRoom(room);
-                std::cout << "Undo: Room with ID '" << room.getId() << "' has been restored.\n";
-            });
-
             std::cout << "Room with ID '" << roomId << "' has been successfully deleted.\n";
         } catch (const std::exception &e) {
             std::cerr << "Error: " << e.what() << "\n";
         }
     }
 
-    void undo() {
-        if (undoStack.empty()) {
-            std::cerr << "Error: Nothing to undo!\n";
-            return;
-        }
-
-        auto lastAction = undoStack.peek();
-        undoStack.pop();
-        lastAction(); // Execute the undo action
-    }
 
     void tampilkanTable() const {
         auto reservations = reservationTable.show_all();
         if (reservations.empty()) {
-            std::cout << "No reservations in Reservation Table.\n";
+            std::cout << "No reservations in queue.\n";
             return;
         }
         for (const auto &rsv: reservations) {
@@ -252,7 +189,7 @@ private:
     }
 
     bool checkReservationConflict(const Reservation &rsv) const {
-        auto reservations = reservationTable.get_reservation_by_id(rsv.getRuangan());
+        auto reservations = reservationTable.show_by_ruangan(rsv.getRuangan());
         for (const auto &res: reservations) {
             if (res.getTanggal() == rsv.getTanggal() &&
                 !(rsv.getJamMulai() >= res.getJamSelesai() ||
