@@ -6,19 +6,19 @@
 #include "../include/utils/utils.hpp"
 
 void displayMenu() {
-    std::cout << "\n========== Sistem Reservasi Ruangan ==========\n";
-    std::cout << "1. Tambah Reservasi\n";
-    std::cout << "2. Tampilkan Antrean\n";
-    std::cout << "3. Commit Antrean (Jadikan Reservasi Tetap)\n";
-    std::cout << "4. Tambah Ruangan\n";
-    std::cout << "5. Lihat Daftar Ruangan\n";
-    std::cout << "6. Hapus Ruangan\n";
-    std::cout << "7. Simpan Sistem (Save to File)\n";
-    std::cout << "8. Muat Sistem (Load from File)\n";
-    std::cout << "9. Bersihkan Antrean\n";
-    std::cout << "10. Keluar\n";
-    std::cout << "===============================================\n";
-    std::cout << "Pilihan: ";
+    std::cout << "\n========== Room Reservation System ==========\n";
+    std::cout << "1. Add Reservation\n";
+    std::cout << "2. Display Queue\n";
+    std::cout << "3. Commit Queue (Finalize Reservations)\n";
+    std::cout << "4. Add Room\n";
+    std::cout << "5. View Room List\n";
+    std::cout << "6. Delete Room\n";
+    std::cout << "7. Save System (Save to File)\n";
+    std::cout << "8. Load System (Load from File)\n";
+    std::cout << "9. Clear Queue\n";
+    std::cout << "10. Exit\n";
+    std::cout << "=============================================\n";
+    std::cout << "Choice: ";
 }
 
 int main() {
@@ -31,68 +31,66 @@ int main() {
         std::cin >> choice;
 
         if (choice == 1) {
-            // Add a new reservation
-            std::string nama, nim, ruangan, tanggal, jamMulai, jamSelesai;
-            std::cout << "Masukkan Nama: ";
-            std::getline(std::cin >> std::ws, nama);
-            std::cout << "Masukkan NIM: ";
-            std::cin >> nim;
-            std::cout << "Masukkan Ruangan: ";
-            std::cin >> ruangan;
-            std::cout << "Masukkan Tanggal (YYYY-MM-DD): ";
-            std::cin >> tanggal;
-            std::cout << "Masukkan Jam Mulai (HH:MM): ";
-            std::cin >> jamMulai;
-            std::cout << "Masukkan Jam Selesai (HH:MM): ";
-            std::cin >> jamSelesai;
+            std::string name, id, room, date, startTime, endTime;
+            std::cout << "Enter Name: ";
+            std::getline(std::cin >> std::ws, name);
+            std::cout << "Enter ID: ";
+            std::cin >> id;
+            std::cout << "Enter Room: ";
+            std::cin >> room;
+            std::cout << "Enter Date (YYYY-MM-DD): ";
+            std::cin >> date;
+            std::cout << "Enter Start Time (HH:MM): ";
+            std::cin >> startTime;
+            std::cout << "Enter End Time (HH:MM): ";
+            std::cin >> endTime;
 
             try {
-                Reservation rsv("", nama, nim, ruangan, tanggal, jamMulai, jamSelesai, "Menunggu");
+                Reservation rsv("", name, id, room, date, startTime, endTime, "Waiting");
                 rsv.setId(generateBookingCode(rsv));
                 bookingSystem.tambahReservasiKeAntrean(rsv);
-                std::cout << "Reservasi berhasil ditambahkan ke antrean!\n";
+                std::cout << "Reservation successfully added to queue!\n";
             } catch (const std::exception &e) {
                 std::cerr << "Error: " << e.what() << "\n";
             }
 
         } else if (choice == 2) {
-            // Display the reservation queue
             bookingSystem.tampilkanQueue();
 
         } else if (choice == 3) {
-            // Commit reservations in the queue
-            bookingSystem.commitAntrean();
+            try {
+                bookingSystem.commitAntrean();
+            } catch (const std::exception &e) {
+                std::cerr << "Error: " << e.what() << "\n";
+            }
 
         } else if (choice == 4) {
-            // Add a new room
             std::string id, name, openTime, closeTime;
             bool ready;
-            std::cout << "Masukkan ID Ruangan: ";
+            std::cout << "Enter Room ID: ";
             std::cin >> id;
-            std::cout << "Masukkan Nama Ruangan: ";
+            std::cout << "Enter Room Name: ";
             std::getline(std::cin >> std::ws, name);
-            std::cout << "Masukkan Jam Buka (HH:MM): ";
+            std::cout << "Enter Opening Time (HH:MM): ";
             std::cin >> openTime;
-            std::cout << "Masukkan Jam Tutup (HH:MM): ";
+            std::cout << "Enter Closing Time (HH:MM): ";
             std::cin >> closeTime;
-            std::cout << "Apakah ruangan siap digunakan? (1 = Ya, 0 = Tidak): ";
+            std::cout << "Is the room ready? (1 = Yes, 0 = No): ";
             std::cin >> ready;
 
             try {
                 bookingSystem.tambahRuangan(id, name, openTime, closeTime, ready);
-                std::cout << "Ruangan berhasil ditambahkan!\n";
+                std::cout << "Room successfully added!\n";
             } catch (const std::exception &e) {
                 std::cerr << "Error: " << e.what() << "\n";
             }
 
         } else if (choice == 5) {
-            // Display all rooms
             std::cout << bookingSystem.getRoomTable();
 
         } else if (choice == 6) {
-            // Delete a room
             std::string roomId;
-            std::cout << "Masukkan ID Ruangan yang ingin dihapus: ";
+            std::cout << "Enter Room ID to delete: ";
             std::cin >> roomId;
 
             try {
@@ -102,9 +100,8 @@ int main() {
             }
 
         } else if (choice == 7) {
-            // Save system state to file
             std::string filename;
-            std::cout << "Masukkan nama file untuk disimpan: ";
+            std::cout << "Enter filename to save: ";
             std::cin >> filename;
 
             try {
@@ -115,7 +112,7 @@ int main() {
 
         } else if (choice == 8) {
             std::string filename;
-            std::cout << "Masukkan nama file untuk dimuat: ";
+            std::cout << "Enter filename to load: ";
             std::cin >> filename;
 
             try {
@@ -125,17 +122,15 @@ int main() {
             }
 
         } else if (choice == 9) {
-            // Clear the reservation queue
             bookingSystem.clearQueue();
-            std::cout << "Antrean telah dibersihkan.\n";
+            std::cout << "The queue has been cleared.\n";
 
         } else if (choice == 10) {
-            // Exit the application
-            std::cout << "Terima kasih telah menggunakan Sistem Reservasi Ruangan!\n";
+            std::cout << "Thank you for using the Room Reservation System!\n";
             break;
 
         } else {
-            std::cout << "Pilihan tidak valid! Silakan coba lagi.\n";
+            std::cout << "Invalid choice! Please try again.\n";
         }
     }
 

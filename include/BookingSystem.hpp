@@ -17,12 +17,12 @@ public:
     explicit BookingSystem(const RoomTabular &rooms) : roomTable(rooms) {
     }
 
-    const RoomTabular& getRoomTable() const {
+    const RoomTabular &getRoomTable() const {
         return roomTable;
     }
 
     void tambahRuangan(const std::string &id, const std::string &name,
-                   const std::string &openTime, const std::string &closeTime, bool ready) {
+                       const std::string &openTime, const std::string &closeTime, bool ready) {
         try {
             Room room(id, name, openTime, closeTime, ready);
             roomTable.addRoom(room);
@@ -40,10 +40,9 @@ public:
             return;
         }
         if (checkReservationConflict(rsv) || checkQueueConflict(rsv)) {
-            std::cerr << "Conflicting reservation exists for room " << rsv.getRuangan()
-                    << " at " << rsv.getTanggal() << " between "
-                    << rsv.getJamMulai() << " and " << rsv.getJamSelesai() << ".\n";
-            return;
+            throw std::runtime_error("Conflicting reservation exists for room " + rsv.getRuangan()
+                                     + " at " + rsv.getTanggal() + " between "
+                                     + rsv.getJamMulai() + " and " + rsv.getJamSelesai() + ".\n");
         }
 
         reservationTable.push(rsv);
@@ -90,15 +89,13 @@ public:
     // capek gweh
     void tambahReservasiKeAntrean(const Reservation &rsv) {
         if (!checkRoomExists(rsv.getRuangan())) {
-            std::cerr << "Room does not exist: " << rsv.getRuangan() << "\n";
-            return;
+            throw std::runtime_error("Room does not exist: " + rsv.getRuangan());
         }
 
         if (checkReservationConflict(rsv) || checkQueueConflict(rsv)) {
-            std::cerr << "Conflicting reservation exists for room " << rsv.getRuangan()
-                    << " at " << rsv.getTanggal() << " between "
-                    << rsv.getJamMulai() << " and " << rsv.getJamSelesai() << ".\n";
-            return;
+            throw std::runtime_error("Conflicting reservation exists for room " + rsv.getRuangan()
+                                     + " at " + rsv.getTanggal() + " between "
+                                     + rsv.getJamMulai() + " and " + rsv.getJamSelesai() + ".\n");
         }
 
         reservationQueue.enqueue_reservation(rsv);
@@ -135,6 +132,7 @@ public:
                     << " | Status: " << rsv.getStatus() << "\n";
         }
     }
+
     void clearQueue() {
         while (!reservationQueue.is_queue_empty()) {
             reservationQueue.dequeue_reservation();
