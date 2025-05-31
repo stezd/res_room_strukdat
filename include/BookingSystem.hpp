@@ -58,6 +58,15 @@ public:
         }
     }
 
+    void undoReservationAction() {
+        try {
+            reservationTable.undo();
+            std::cout << "Undo operation successful.\n";
+        } catch (const std::exception &e) {
+            std::cerr << "Undo operation failed: " << e.what() << "\n";
+        }
+    }
+
     void deleteRoomById(const std::string &roomId) {
         try {
             roomTable.deleteRoom(roomId);
@@ -67,6 +76,16 @@ public:
         }
     }
 
+    void eraseReservationById(const std::string &reservationId) {
+        try {
+            reservationTable.erase(reservationId);
+            std::cout << "Reservation with ID '" << reservationId
+                      << "' has been successfully erased from the system.\n";
+        } catch (const std::exception &e) {
+            std::cerr << "Error: Unable to erase reservation. "
+                      << e.what() << "\n";
+        }
+    }
 
     void tampilkanTable() const {
         auto reservations = reservationTable.show_all();
@@ -85,8 +104,6 @@ public:
         }
     }
 
-    // implementasi queue yang wajib tapi sebenarnya kagak perlu
-    // capek gweh
     void tambahReservasiKeAntrean(const Reservation &rsv) {
         if (!checkRoomExists(rsv.getRuangan())) {
             throw std::runtime_error("Room does not exist: " + rsv.getRuangan());
@@ -99,7 +116,6 @@ public:
         }
 
         reservationQueue.enqueue_reservation(rsv);
-        std::cout << "Reservation added to the queue successfully.\n";
     }
 
     void commitAntrean() {
@@ -140,7 +156,6 @@ public:
         std::cout << "The queue has been cleared.\n";
     }
 
-    // aduh sorting lagi
     void sortReservationTable(const std::string &criteria) {
         try {
             reservationTable.sort_reservations(criteria);
@@ -150,7 +165,6 @@ public:
         }
     }
 
-    // implementasi permanence atau save/load system state
     void saveSystemState(const std::string &filename) const {
         nlohmann::json jsonData;
         jsonData["rooms"] = roomTable.to_json();

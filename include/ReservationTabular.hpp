@@ -10,7 +10,7 @@
 
 class ReservationTabular {
     std::vector<Reservation> ReservationTable;
-    Stack<std::pair<std::string, Reservation>> undoStack; // Undo stack to store actions
+    Stack<std::pair<std::string, Reservation>> undoStack;
 
 public:
     std::optional<Reservation> get_reservation_by_id(const std::string &id) const {
@@ -25,7 +25,6 @@ public:
     }
 
     void push(const Reservation &rsv) {
-        // Save this addition to the undo stack for reversal
         undoStack.push({"add", rsv});
         ReservationTable.push_back(rsv);
     }
@@ -36,7 +35,6 @@ public:
         if (it == ReservationTable.end()) {
             throw std::runtime_error("Reservation with given ID does not exist");
         }
-        // Save this removal to the undo stack for reversal
         undoStack.push({"delete", *it});
         ReservationTable.erase(it);
     }
@@ -75,23 +73,21 @@ public:
     }
 
     void from_json(const nlohmann::json &jsonArray) {
-        ReservationTable.clear(); // Clear existing table before loading
+        ReservationTable.clear();
         for (const auto &item : jsonArray) {
-            ReservationTable.push_back(Reservation::from_json(item)); // Use Reservation's from_json
+            ReservationTable.push_back(Reservation::from_json(item));
         }
     }
 
-    // Undo the last operation (add or delete)
     void undo() {
         if (undoStack.empty()) {
             throw std::runtime_error("Undo stack is empty. No actions to undo.");
         }
 
-        auto [action, reservation] = undoStack.peek(); // Get the last action
-        undoStack.pop(); // Remove it from the stack
+        auto [action, reservation] = undoStack.peek();
+        undoStack.pop();
 
         if (action == "add") {
-            // Undo an add operation by removing the added reservation
             auto it = std::ranges::find_if(ReservationTable.begin(), ReservationTable.end(),
                                            [&reservation](const Reservation &rsv) {
                                                return rsv.getId() == reservation.getId();
@@ -100,12 +96,10 @@ public:
                 ReservationTable.erase(it);
             }
         } else if (action == "delete") {
-            // Undo a delete operation by re-adding the reservation
             ReservationTable.push_back(reservation);
         }
     }
 
-    // Implement sorting to maintain previous functionality
     void sort_reservations(const std::string &criteria) {
         if (criteria == "tanggal") {
             std::ranges::sort(ReservationTable, [](const Reservation &a, const Reservation &b) {
