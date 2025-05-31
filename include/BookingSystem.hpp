@@ -76,6 +76,17 @@ public:
         }
     }
 
+    void eraseReservationById(const std::string &reservationId) {
+        try {
+            reservationTable.erase(reservationId);
+            std::cout << "Reservation with ID '" << reservationId
+                      << "' has been successfully erased from the system.\n";
+        } catch (const std::exception &e) {
+            std::cerr << "Error: Unable to erase reservation. "
+                      << e.what() << "\n";
+        }
+    }
+
     void tampilkanTable() const {
         auto reservations = reservationTable.show_all();
         if (reservations.empty()) {
