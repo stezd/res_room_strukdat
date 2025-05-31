@@ -84,4 +84,4 @@ Paralel: P1
 
 ## License
 
-This project is provided under MIT. Feel free to use and modify.
+This project is provided under [MIT](./LICENSE). Feel free to use and modify.
