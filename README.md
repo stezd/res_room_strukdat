@@ -2,6 +2,12 @@
 
 This project implements a **Room Reservation System** in C++ with support for **object permanence** using JSON serialization. It allows users to manage rooms and reservations through an interactive command-line interface.
 
+## Project Team (Kelompok 1)
+Paralel: P1
+- Aldi Pramudya (G6401231003)
+- Luqman Fadillah Santoso (G6401231136)
+- Nabila Sayyidatul Aflah (G6401231130)
+
 ## Features
 
 - **Room Management**:
@@ -63,30 +69,18 @@ This project implements a **Room Reservation System** in C++ with support for **
    git clone https://github.com/your-repository/room-reservation-system.git
    cd room-reservation-system
 ```
-1. Create a build directory:
+2. Create a build directory:
 ``` bash
    mkdir build && cd build
 ```
-1. Generate build files using CMake:
+3. Generate build files using CMake:
 ``` bash
    cmake ..
 ```
-1. Build the project:
+4. Build the project:
 ``` bash
    cmake --build .
 ```
-#### If Manually Compiling with g++:
-1. Use the following command to compile the project:
-``` bash
-   g++ -std=c++17 -Ipath/to/json/include -o main main.cpp
-```
-Replace `path/to/json/include` with the directory containing the `json.hpp` header.
-### Running the Application
-After building the project, you can run the compiled executable:
-``` bash
-./main
-```
-Follow the interactive menu to add reservations, display room information, and more.
 
 ## License
 
