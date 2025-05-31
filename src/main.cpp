@@ -19,6 +19,7 @@ std::string promptInput(const std::string &promptMessage, Validator validator) {
     }
 }
 
+// Prompts for integer input within a range
 int promptIntInput(const std::string &promptMessage, int min, int max) {
     int value;
     while (true) {
@@ -26,15 +27,16 @@ int promptIntInput(const std::string &promptMessage, int min, int max) {
         std::cin >> value;
 
         if (!std::cin.fail() && value >= min && value <= max) {
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear remaining characters
             return value;
         }
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cin.clear(); // Clear error state
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore invalid input
         std::cout << "Invalid input. Please enter a number between " << min << " and " << max << ".\n";
     }
 }
 
+// Prompts for and validates a time range
 std::pair<std::string, std::string> promptTimeRange() {
     std::string startTime, endTime, errorMsg;
 
@@ -42,10 +44,10 @@ std::pair<std::string, std::string> promptTimeRange() {
         startTime = promptInput("Enter Start Time (HH:MM): ", InputValidator::validateTime);
         endTime = promptInput("Enter End Time (HH:MM): ", InputValidator::validateTime);
 
-        if (InputValidator::validateTimeRange(startTime, endTime)) {
+        if (InputValidator::validateTimeRange(startTime, endTime, errorMsg)) {
             return {startTime, endTime};
         }
-        std::cout << "Error: Start time must be earlier than end time.\n";
+        std::cout << "Error: " << errorMsg << "\n";
     }
 }
 
@@ -60,7 +62,8 @@ void displayMenu() {
     std::cout << "7. Save System (Save to File)\n";
     std::cout << "8. Load System (Load from File)\n";
     std::cout << "9. Clear Queue\n";
-    std::cout << "10. Exit\n";
+    std::cout << "10. View Reservation Table\n";
+    std::cout << "11. Exit\n";
     std::cout << "=============================================\n";
     std::cout << "Choice: ";
 }
@@ -69,9 +72,15 @@ int main() {
     RoomTabular initialRooms;
     BookingSystem bookingSystem(initialRooms);
 
+    const std::string defaultFilename = "save.json";
+    try {
+        bookingSystem.loadSystemState(defaultFilename);
+        std::cout << "System state auto-loaded from " << defaultFilename << ".\n";
+    } catch (const std::exception &) {}
+
     while (true) {
         displayMenu();
-        int choice = promptIntInput("", 1, 10);
+        int choice = promptIntInput("", 1, 11); // Updated menu range to 11
 
         if (choice == 1) {
             std::string name = promptInput("Enter Name: ", InputValidator::validateName);
@@ -143,7 +152,10 @@ int main() {
             bookingSystem.clearQueue();
             std::cout << "The queue has been cleared.\n";
 
-        } else if (choice == 10) {
+        } else if (choice == 10) { // New choice for viewing reservation table
+            bookingSystem.tampilkanTable();
+
+        } else if (choice == 11) { // Exit option
             std::cout << "Thank you for using the Room Reservation System!\n";
             break;
         }
