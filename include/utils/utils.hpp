@@ -4,7 +4,7 @@
 #include <functional>
 #include <iomanip>
 #include <sstream>
-#include "Reservation.hpp"
+#include "../Reservation.hpp"
 
 inline std::string generateBookingCode(const Reservation &rsv) {
     constexpr std::hash<std::string> hasher;

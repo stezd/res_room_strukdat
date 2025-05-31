@@ -3,15 +3,17 @@
 #include "RoomTabular.hpp"
 #include "ReservationTabular.hpp"
 #include "Reservation.hpp"
+#include "ReservationQueue.hpp"
 #include <iostream>
 #include <string>
 
 class BookingSystem {
     RoomTabular roomTable;
     ReservationTabular reservationTable;
+    ReservationQueue reservationQueue;
 
 public:
-    BookingSystem(const RoomTabular &rooms) : roomTable(rooms) {
+    explicit BookingSystem(const RoomTabular &rooms) : roomTable(rooms) {
     }
 
     void tambahReservasi(const Reservation &rsv) {
@@ -28,7 +30,7 @@ public:
         std::cout << "Reservation added successfully!\n";
     }
 
-    void tampilkanAntrean() const {
+    void tampilkanTable() const {
         auto reservations = reservationTable.show_all();
         if (reservations.empty()) {
             std::cout << "No reservations in queue.\n";
@@ -44,6 +46,55 @@ public:
                     << " | Status: " << rsv.getStatus() << "\n";
         }
     }
+
+    // implementasi queue yang wajib tapi sebenarnya kagak perlu
+    // capek gweh
+    void tambahReservasiKeAntrean(const Reservation &rsv) {
+        if (!checkRoomExists(rsv.getRuangan())) {
+            std::cerr << "Room does not exist: " << rsv.getRuangan() << "\n";
+            return;
+        }
+
+        if (checkReservationConflict(rsv) || checkQueueConflict(rsv)) {
+            std::cerr << "Conflicting reservation exists for room " << rsv.getRuangan() << "\n";
+            return;
+        }
+
+        reservationQueue.enqueue_reservation(rsv);
+        std::cout << "Reservation added to the queue successfully.\n";
+    }
+
+    void commitAntrean() {
+        while (!reservationQueue.is_queue_empty()) {
+            Reservation rsv = reservationQueue.dequeue_reservation();
+            reservationTable.push(rsv);
+            std::cout << "Reservation ID: " << rsv.getId() << " has been committed.\n";
+        }
+        std::cout << "All reservations from the queue have been committed.\n";
+    }
+
+    void tampilkanQueue() const {
+        if (reservationQueue.is_queue_empty()) {
+            std::cout << "No reservations in queue.\n";
+            return;
+        }
+
+        size_t queueSize = reservationQueue.queue_size();
+        std::cout << "Reservations in the queue (" << queueSize << "):\n";
+
+        auto tempQueue = reservationQueue; // Create a temporary copy of the queue
+        while (!tempQueue.is_queue_empty()) {
+            Reservation rsv = tempQueue.dequeue_reservation();
+            std::cout << "ID: " << rsv.getId()
+                      << " | Name: " << rsv.getNama()
+                      << " | Room: " << rsv.getRuangan()
+                      << " | Date: " << rsv.getTanggal()
+                      << " | Start: " << rsv.getJamMulai()
+                      << " | End: " << rsv.getJamSelesai()
+                      << " | Status: " << rsv.getStatus() << "\n";
+        }
+    }
+
 
 private:
     bool checkRoomExists(const std::string &roomId) const {
@@ -62,6 +113,20 @@ private:
             if (res.getTanggal() == rsv.getTanggal() &&
                 !(rsv.getJamMulai() >= res.getJamSelesai() ||
                   rsv.getJamSelesai() <= res.getJamMulai())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool checkQueueConflict(const Reservation &rsv) const {
+        auto tempQueue = reservationQueue; // Create a temporary copy of the queue
+        while (!tempQueue.is_queue_empty()) {
+            Reservation queuedReservation = tempQueue.dequeue_reservation();
+            if (queuedReservation.getRuangan() == rsv.getRuangan() &&
+                queuedReservation.getTanggal() == rsv.getTanggal() &&
+                !(rsv.getJamMulai() >= queuedReservation.getJamSelesai() ||
+                  rsv.getJamSelesai() <= queuedReservation.getJamMulai())) {
                 return true;
             }
         }

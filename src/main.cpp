@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include "utils.hpp"
+#include "../include/utils/utils.hpp"
 
 int main() {
     BookingSystem bookingSystem;

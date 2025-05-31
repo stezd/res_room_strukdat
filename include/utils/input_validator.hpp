@@ -3,7 +3,7 @@
 #include <regex>
 #include <string>
 #include <sstream>
-#include "RoomTabular.hpp"
+#include "../RoomTabular.hpp"
 
 namespace InputValidator {
     inline bool validateNotEmpty(const std::string &input, std::string &errorMsg) {

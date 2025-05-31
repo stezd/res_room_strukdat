@@ -4,8 +4,8 @@
 #include <fstream>
 #include <stdexcept>
 #include <string>
-#include <RoomTabular.hpp>
-#include <Reservation.hpp>
+#include <../RoomTabular.hpp>
+#include <../Reservation.hpp>
 
 inline void saveToFile(const std::string& filename, const nlohmann::json& jsonData) {
     std::ofstream outFile(filename);

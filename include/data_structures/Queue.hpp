@@ -46,7 +46,7 @@ public:
         --count;
     }
 
-    T &peek() {
+    T &peek () const {
         if (empty()) throw std::out_of_range("Queue is empty");
         return front->data;
     }
