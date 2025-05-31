@@ -3,6 +3,7 @@
 #include "Reservation.hpp"
 #include <vector>
 #include <string>
+#include <stdexcept>
 
 class ReservationTabular {
     std::vector<Reservation> ReservationTable;
@@ -55,5 +56,28 @@ public:
         std::ranges::copy_if(ReservationTable, std::back_inserter(result),
                              [&tanggal](const Reservation &rsv) { return rsv.getTanggal() == tanggal; });
         return result;
+    }
+
+    //implementasi sorting biar nilai bagus dikit
+    void sort_reservations(const std::string &criteria) {
+        if (criteria == "tanggal") {
+            std::ranges::sort(ReservationTable, [](const Reservation &a, const Reservation &b) {
+                return a.getTanggal() < b.getTanggal();
+            });
+        } else if (criteria == "ruangan") {
+            std::ranges::sort(ReservationTable, [](const Reservation &a, const Reservation &b) {
+                return a.getRuangan() < b.getRuangan();
+            });
+        } else if (criteria == "jam_mulai") {
+            std::ranges::sort(ReservationTable, [](const Reservation &a, const Reservation &b) {
+                return a.getJamMulai() < b.getJamMulai();
+            });
+        } else if (criteria == "id") {
+            std::ranges::sort(ReservationTable, [](const Reservation &a, const Reservation &b) {
+                return a.getId() < b.getId();
+            });
+        } else {
+            throw std::invalid_argument("Invalid sorting criteria: " + criteria);
+        }
     }
 };
