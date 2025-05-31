@@ -1,13 +1,57 @@
 #include "BookingSystem.hpp"
 #include "Reservation.hpp"
+#include "input_validator.hpp"
 #include <iostream>
 #include <string>
 
 #include "../include/utils/utils.hpp"
 
+template <typename Validator>
+std::string promptInput(const std::string &promptMessage, Validator validator) {
+    std::string input, errorMsg;
+    while (true) {
+        std::cout << promptMessage;
+        std::getline(std::cin >> std::ws, input);
+        if (validator(input, errorMsg)) {
+            return input;
+        }
+        std::cout << "Error: " << errorMsg << "\n";
+    }
+}
+
+int promptIntInput(const std::string &promptMessage, int min, int max) {
+    int value;
+    while (true) {
+        std::cout << promptMessage;
+        std::cin >> value;
+
+        if (!std::cin.fail() && value >= min && value <= max) {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            return value;
+        }
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Invalid input. Please enter a number between " << min << " and " << max << ".\n";
+    }
+}
+
+std::pair<std::string, std::string> promptTimeRange() {
+    std::string startTime, endTime, errorMsg;
+
+    while (true) {
+        startTime = promptInput("Enter Start Time (HH:MM): ", InputValidator::validateTime);
+        endTime = promptInput("Enter End Time (HH:MM): ", InputValidator::validateTime);
+
+        if (InputValidator::validateTimeRange(startTime, endTime)) {
+            return {startTime, endTime};
+        }
+        std::cout << "Error: Start time must be earlier than end time.\n";
+    }
+}
+
 void displayMenu() {
     std::cout << "\n========== Room Reservation System ==========\n";
-    std::cout << "1. Add Reservation\n";
+    std::cout << "1. Enqueue Reservation\n";
     std::cout << "2. Display Queue\n";
     std::cout << "3. Commit Queue (Finalize Reservations)\n";
     std::cout << "4. Add Room\n";
@@ -25,28 +69,19 @@ int main() {
     RoomTabular initialRooms;
     BookingSystem bookingSystem(initialRooms);
 
-    int choice;
     while (true) {
         displayMenu();
-        std::cin >> choice;
+        int choice = promptIntInput("", 1, 10);
 
         if (choice == 1) {
-            std::string name, id, room, date, startTime, endTime;
-            std::cout << "Enter Name: ";
-            std::getline(std::cin >> std::ws, name);
-            std::cout << "Enter ID: ";
-            std::cin >> id;
-            std::cout << "Enter Room: ";
-            std::cin >> room;
-            std::cout << "Enter Date (YYYY-MM-DD): ";
-            std::cin >> date;
-            std::cout << "Enter Start Time (HH:MM): ";
-            std::cin >> startTime;
-            std::cout << "Enter End Time (HH:MM): ";
-            std::cin >> endTime;
+            std::string name = promptInput("Enter Name: ", InputValidator::validateName);
+            std::string nim = promptInput("Enter NIM (Numeric ID): ", InputValidator::validateNIM);
+            std::string room = promptInput("Enter Room: ", InputValidator::validateNotEmpty);
+            std::string date = promptInput("Enter Date (YYYY-MM-DD): ", InputValidator::validateDate);
+            auto [startTime, endTime] = promptTimeRange();
 
             try {
-                Reservation rsv("", name, id, room, date, startTime, endTime, "Waiting");
+                Reservation rsv("", name, nim, room, date, startTime, endTime, "Waiting");
                 rsv.setId(generateBookingCode(rsv));
                 bookingSystem.tambahReservasiKeAntrean(rsv);
                 std::cout << "Reservation successfully added to queue!\n";
@@ -65,18 +100,10 @@ int main() {
             }
 
         } else if (choice == 4) {
-            std::string id, name, openTime, closeTime;
-            bool ready;
-            std::cout << "Enter Room ID: ";
-            std::cin >> id;
-            std::cout << "Enter Room Name: ";
-            std::getline(std::cin >> std::ws, name);
-            std::cout << "Enter Opening Time (HH:MM): ";
-            std::cin >> openTime;
-            std::cout << "Enter Closing Time (HH:MM): ";
-            std::cin >> closeTime;
-            std::cout << "Is the room ready? (1 = Yes, 0 = No): ";
-            std::cin >> ready;
+            std::string id = promptInput("Enter Room ID: ", InputValidator::validateNotEmpty);
+            std::string name = promptInput("Enter Room Name: ", InputValidator::validateName);
+            auto [openTime, closeTime] = promptTimeRange();
+            bool ready = promptIntInput("Is the room ready? (1=Yes, 0=No): ", 0, 1);
 
             try {
                 bookingSystem.tambahRuangan(id, name, openTime, closeTime, ready);
@@ -89,10 +116,7 @@ int main() {
             std::cout << bookingSystem.getRoomTable();
 
         } else if (choice == 6) {
-            std::string roomId;
-            std::cout << "Enter Room ID to delete: ";
-            std::cin >> roomId;
-
+            std::string roomId = promptInput("Enter Room ID to delete: ", InputValidator::validateNotEmpty);
             try {
                 bookingSystem.deleteRoomById(roomId);
             } catch (const std::exception &e) {
@@ -100,10 +124,7 @@ int main() {
             }
 
         } else if (choice == 7) {
-            std::string filename;
-            std::cout << "Enter filename to save: ";
-            std::cin >> filename;
-
+            std::string filename = promptInput("Enter filename to save: ", InputValidator::validateNotEmpty);
             try {
                 bookingSystem.saveSystemState(filename);
             } catch (const std::exception &e) {
@@ -111,10 +132,7 @@ int main() {
             }
 
         } else if (choice == 8) {
-            std::string filename;
-            std::cout << "Enter filename to load: ";
-            std::cin >> filename;
-
+            std::string filename = promptInput("Enter filename to load: ", InputValidator::validateNotEmpty);
             try {
                 bookingSystem.loadSystemState(filename);
             } catch (const std::exception &e) {
@@ -128,9 +146,6 @@ int main() {
         } else if (choice == 10) {
             std::cout << "Thank you for using the Room Reservation System!\n";
             break;
-
-        } else {
-            std::cout << "Invalid choice! Please try again.\n";
         }
     }
 
