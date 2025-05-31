@@ -172,13 +172,13 @@ int main() {
             } catch (const std::exception &e) {
                 std::cerr << "Error while sorting reservations: " << e.what() << "\n";
             }
-        } else if (choice == 12) { // Undo Last Action
+        } else if (choice == 12) {
             try {
                 bookingSystem->undoReservationAction();
             } catch (const std::exception &e) {
                 std::cerr << "Error while undoing the action: " << e.what() << "\n";
             }
-        } else if (choice == 13) { // Exit
+        } else if (choice == 13) {
             std::cout << "Thank you for using the Room Reservation System!\n";
             break;
         }

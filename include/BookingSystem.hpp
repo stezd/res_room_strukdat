@@ -105,7 +105,6 @@ public:
         }
 
         reservationQueue.enqueue_reservation(rsv);
-        std::cout << "Reservation added to the queue successfully.\n";
     }
 
     void commitAntrean() {
